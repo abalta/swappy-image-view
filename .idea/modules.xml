@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/SwappyImageView.iml" filepath="$PROJECT_DIR$/SwappyImageView.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/swappy/swappy.iml" filepath="$PROJECT_DIR$/swappy/swappy.iml" />
+    </modules>
+  </component>
+</project>
