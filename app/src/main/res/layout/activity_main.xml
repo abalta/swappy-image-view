@@ -7,7 +7,10 @@
     <com.abdullahbalta.swappy.SwappyImageView
         android:id="@+id/swappy_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:add_icon="@drawable/ic_add_box"/>
+        android:layout_height="240dp"
+        app:add_icon="@drawable/ic_add_box"
+        app:main_drawable="@drawable/ic_weekend"
+        app:third_drawable="@drawable/sample_one"
+        app:first_drawable="@drawable/ic_whatshot" />
 </LinearLayout>
 

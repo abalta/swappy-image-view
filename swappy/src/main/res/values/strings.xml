@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Swappy</string>
+    <string name="no_images_left">No images left</string>
 </resources>

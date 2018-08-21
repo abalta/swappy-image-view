@@ -14,9 +14,9 @@ import android.util.AttributeSet
 import android.view.DragEvent
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.Toast
 
 class SwappyImageView @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
@@ -63,6 +63,21 @@ class SwappyImageView @JvmOverloads constructor(
      * Guideline reference
      */
     private val guideLine = Guideline(context)
+    /**
+     * ImageView references
+     */
+    private lateinit var mainImage: ImageView
+    private lateinit var firstImage: ImageView
+    private lateinit var secondImage: ImageView
+    private lateinit var thirdImage: ImageView
+    /**
+     * Add/Remove Button references
+     */
+    private lateinit var addRemoveBtnMain: ImageButton
+    private lateinit var addRemoveBtnFirst: ImageButton
+    private lateinit var addRemoveBtnSecond: ImageButton
+    private lateinit var addRemoveBtnThird: ImageButton
+
 
     private var whichImageView = 0
     private var resultDraw: Drawable? = null
@@ -85,6 +100,31 @@ class SwappyImageView @JvmOverloads constructor(
         if (a.hasValue(R.styleable.SwappyImageView_item_padding)) {
             val px = a.getDimension(R.styleable.SwappyImageView_item_padding, 0f)
             params.itemPadding = px
+        }
+
+        if (a.hasValue(R.styleable.SwappyImageView_main_drawable)) {
+            val mainDrawable = a.getResourceId(R.styleable.SwappyImageView_main_drawable, 0)
+            params.mainImage = mainDrawable
+        }
+
+        if (a.hasValue(R.styleable.SwappyImageView_first_drawable)) {
+            val firstDrawable = a.getResourceId(R.styleable.SwappyImageView_first_drawable, 0)
+            params.firstImage = firstDrawable
+        }
+
+        if (a.hasValue(R.styleable.SwappyImageView_second_drawable)) {
+            val secondDrawable = a.getResourceId(R.styleable.SwappyImageView_second_drawable, 0)
+            params.secondImage = secondDrawable
+        }
+
+        if (a.hasValue(R.styleable.SwappyImageView_third_drawable)) {
+            val thirdDrawable = a.getResourceId(R.styleable.SwappyImageView_third_drawable, 0)
+            params.thirdImage = thirdDrawable
+        }
+
+        if (a.hasValue(R.styleable.SwappyImageView_placeholder)) {
+            val placeholder = a.getResourceId(R.styleable.SwappyImageView_placeholder, R.drawable.ic_image_empty)
+            params.placeholder = placeholder
         }
 
         a.recycle()
@@ -185,24 +225,54 @@ class SwappyImageView @JvmOverloads constructor(
 
     private fun setListeners() {
 
-        val addRemoveBtnMain = mainImageView.findViewById<ImageButton>(R.id.btn_add_remove)
-        val addRemoveBtnFirst = firstImageView.findViewById<ImageButton>(R.id.btn_add_remove)
-        val addRemoveBtnSecond = secondImageView.findViewById<ImageButton>(R.id.btn_add_remove)
-        val addRemoveBtnThird = thirdImageView.findViewById<ImageButton>(R.id.btn_add_remove)
+        addRemoveBtnMain = mainImageView.findViewById(R.id.btn_add_remove)
+        addRemoveBtnFirst = firstImageView.findViewById(R.id.btn_add_remove)
+        addRemoveBtnSecond = secondImageView.findViewById(R.id.btn_add_remove)
+        addRemoveBtnThird = thirdImageView.findViewById(R.id.btn_add_remove)
 
-        val mainImage = mainImageView.findViewById<ImageView>(R.id.imageView)
+        mainImage = mainImageView.findViewById(R.id.imageView)
+        mainImage.setImageResource(params.mainImage)
+        if (params.mainImage != 0) {
+            mainImage.setBackgroundResource(0)
+            addRemoveBtnMain.setBackgroundResource(params.removeIcon)
+        } else {
+            addRemoveBtnMain.setBackgroundResource(params.addIcon)
+            mainImage.setBackgroundResource(params.placeholder)
+        }
         mainImage.tag = id1
-        val firstImage = firstImageView.findViewById<ImageView>(R.id.imageView)
-        firstImage.tag = id2
-        val secondImage = secondImageView.findViewById<ImageView>(R.id.imageView)
-        secondImage.tag = id3
-        val thirdImage = thirdImageView.findViewById<ImageView>(R.id.imageView)
-        thirdImage.tag = id4
 
-        addRemoveBtnMain.setBackgroundResource(params.addIcon)
-        addRemoveBtnFirst.setBackgroundResource(params.addIcon)
-        addRemoveBtnSecond.setBackgroundResource(params.addIcon)
-        addRemoveBtnThird.setBackgroundResource(params.addIcon)
+        firstImage = firstImageView.findViewById(R.id.imageView)
+        firstImage.setImageResource(params.firstImage)
+        if (params.firstImage != 0) {
+            firstImage.setBackgroundResource(0)
+            addRemoveBtnFirst.setBackgroundResource(params.removeIcon)
+        } else {
+            addRemoveBtnFirst.setBackgroundResource(params.addIcon)
+            firstImage.setBackgroundResource(params.placeholder)
+        }
+        firstImage.tag = id2
+
+        secondImage = secondImageView.findViewById(R.id.imageView)
+        secondImage.setImageResource(params.secondImage)
+        if (params.secondImage != 0) {
+            secondImage.setBackgroundResource(0)
+            addRemoveBtnSecond.setBackgroundResource(params.removeIcon)
+        } else {
+            addRemoveBtnSecond.setBackgroundResource(params.addIcon)
+            secondImage.setBackgroundResource(params.placeholder)
+        }
+        secondImage.tag = id3
+
+        thirdImage = thirdImageView.findViewById(R.id.imageView)
+        thirdImage.setImageResource(params.thirdImage)
+        if (params.thirdImage != 0) {
+            thirdImage.setBackgroundResource(0)
+            addRemoveBtnThird.setBackgroundResource(params.removeIcon)
+        } else {
+            addRemoveBtnThird.setBackgroundResource(params.addIcon)
+            thirdImage.setBackgroundResource(params.placeholder)
+        }
+        thirdImage.tag = id4
 
         mainImage.setOnLongClickListener(this)
         firstImage.setOnLongClickListener(this)
@@ -218,15 +288,15 @@ class SwappyImageView @JvmOverloads constructor(
             whichImageView = 0
             checkRemoveOrAddImage(mainImage.drawable)
         }
-        addRemoveBtnFirst.setOnClickListener{
+        addRemoveBtnFirst.setOnClickListener {
             whichImageView = 1
             checkRemoveOrAddImage(firstImage.drawable)
         }
-        addRemoveBtnSecond.setOnClickListener{
+        addRemoveBtnSecond.setOnClickListener {
             whichImageView = 2
             checkRemoveOrAddImage(secondImage.drawable)
         }
-        addRemoveBtnThird.setOnClickListener{
+        addRemoveBtnThird.setOnClickListener {
             whichImageView = 3
             checkRemoveOrAddImage(thirdImage.drawable)
         }
@@ -275,14 +345,60 @@ class SwappyImageView @JvmOverloads constructor(
      * If image is not null remove image
      * If image is null add image
      */
-    private fun checkRemoveOrAddImage(image: Drawable) {
-        /*if (image != null) {
-            if (whichImageView == 0)
-                if (resultDraw == null)
-
+    private fun checkRemoveOrAddImage(image: Drawable?) {
+        if (image != null) {
+            if (whichImageView == 0) {
+                if (resultDraw == null) {
+                    isSmallImageFilled(0)
+                    if (resultDraw == null) {
+                        isSmallImageFilled(1)
+                        if (resultDraw == null) {
+                            isSmallImageFilled(2)
+                            if (resultDraw == null) {
+                                isSmallImageFilled(3)
+                                if (resultDraw == null) {
+                                    Toast.makeText(context, context.getString(R.string.no_images_left), Toast.LENGTH_SHORT).show()
+                                    mainImage.setImageDrawable(resultDraw)
+                                    mainImage.setBackgroundResource(params.placeholder)
+                                    addRemoveBtnMain.setBackgroundResource(params.addIcon)
+                                } else
+                                    mainImage.setImageDrawable(resultDraw)
+                            } else
+                                mainImage.setImageDrawable(resultDraw)
+                        } else
+                            mainImage.setImageDrawable(resultDraw)
+                    } else
+                        mainImage.setImageDrawable(resultDraw)
+                }
+            } else if (whichImageView == 1) {
+                isSmallImageFilled(1)
+            } else if (whichImageView == 2) {
+                isSmallImageFilled(2)
+            } else if (whichImageView == 3) {
+                isSmallImageFilled(3)
+            }
         } else {
+            when (whichImageView) {
+                0 -> {
+                    swappyListener?.onAddingImage(mainImage)
+                    checkImageAdded(mainImage)
+                }
+                1 -> {
+                    swappyListener?.onAddingImage(firstImage)
+                    checkImageAdded(firstImage)
+                }
+                2 -> {
+                    swappyListener?.onAddingImage(secondImage)
+                    checkImageAdded(secondImage)
+                }
+                3 -> {
+                    swappyListener?.onAddingImage(thirdImage)
+                    checkImageAdded(thirdImage)
+                }
+            }
 
-        }*/
+        }
+        resultDraw = null
     }
 
     /**
@@ -290,6 +406,89 @@ class SwappyImageView @JvmOverloads constructor(
      */
     private fun isSmallImageFilled(pos: Int) {
         resultDraw = null
+        if (pos == 0) {
+            resultDraw = firstImage.drawable
+            if (secondImage.drawable != null) {
+                addImage(firstImage, addRemoveBtnFirst, secondImage.drawable)
+                if (thirdImage.drawable != null) {
+                    addImage(secondImage, addRemoveBtnSecond, thirdImage.drawable)
+                    removeImage(thirdImage, addRemoveBtnThird)
+                } else {
+                    removeImage(secondImage, addRemoveBtnSecond)
+                }
+            } else if (thirdImage.drawable != null) {
+                addImage(firstImage, addRemoveBtnFirst, thirdImage.drawable)
+                removeImage(thirdImage, addRemoveBtnThird)
+            } else {
+                removeImage(firstImage, addRemoveBtnFirst)
+            }
+        } else if (pos == 1 && firstImage.drawable != null) {
+            resultDraw = firstImage.drawable
+            if (secondImage.drawable != null) {
+                addImage(firstImage, addRemoveBtnFirst, secondImage.drawable)
+                removeImage(secondImage, addRemoveBtnSecond)
+                if (thirdImage.drawable != null) {
+                    addImage(secondImage, addRemoveBtnSecond, thirdImage.drawable)
+                    removeImage(thirdImage, addRemoveBtnThird)
+                } else {
+                    removeImage(secondImage, addRemoveBtnSecond)
+                }
+            } else if (thirdImage.drawable != null) {
+                addImage(firstImage, addRemoveBtnFirst, thirdImage.drawable)
+                removeImage(thirdImage, addRemoveBtnThird)
+            } else {
+                removeImage(firstImage, addRemoveBtnFirst)
+            }
+        } else if (pos == 2 && secondImage.drawable != null) {
+            resultDraw = secondImage.drawable
+            if (thirdImage.drawable != null) {
+                addImage(secondImage, addRemoveBtnSecond, thirdImage.drawable)
+                removeImage(thirdImage, addRemoveBtnThird)
+            } else {
+                removeImage(secondImage, addRemoveBtnSecond)
+            }
+        } else if (pos == 3 && thirdImage.drawable != null) {
+            resultDraw = thirdImage.drawable
+            removeImage(thirdImage, addRemoveBtnThird)
+        }
+    }
 
+    /**
+     * Check if image successfully added
+     */
+    private fun checkImageAdded(imageView: ImageView) {
+        when (whichImageView) {
+            0 -> {
+                if (imageView.drawable != null)
+                    addRemoveBtnMain.setBackgroundResource(params.removeIcon)
+            }
+            1 -> {
+                if (imageView.drawable != null)
+                    addRemoveBtnFirst.setBackgroundResource(params.removeIcon)
+            }
+            2 -> {
+                if (imageView.drawable != null)
+                    addRemoveBtnSecond.setBackgroundResource(params.removeIcon)
+            }
+            3 -> {
+                if (imageView.drawable != null)
+                    addRemoveBtnThird.setBackgroundResource(params.removeIcon)
+            }
+        }
+    }
+    /**
+     * Remove image
+     */
+    private fun removeImage(imageView: ImageView, imageButton: ImageButton) {
+        imageView.setImageDrawable(null)
+        imageView.setBackgroundResource(params.placeholder)
+        imageButton.setBackgroundResource(params.addIcon)
+    }
+    /**
+     * Add image
+     */
+    private fun addImage(imageView: ImageView, imageButton: ImageButton, drawable: Drawable) {
+        imageView.setImageDrawable(drawable)
+        imageButton.setBackgroundResource(params.removeIcon)
     }
 }
