@@ -5,4 +5,13 @@
     <item name="first_image_view_id" type="id" />
     <item name="second_image_view_id" type="id" />
     <item name="third_image_view_id" type="id" />
+    <item name="main_image_id" type="id" />
+    <item name="first_image_id" type="id" />
+    <item name="second_image_id" type="id" />
+    <item name="third_image_id" type="id" />
+    <item name="main_add_remove_id" type="id" />
+    <item name="first_add_remove_id" type="id" />
+    <item name="second_add_remove_id" type="id" />
+    <item name="third_add_remove_id" type="id" />
+    <item name="swappy_image_view_id" type="id" />
 </resources>

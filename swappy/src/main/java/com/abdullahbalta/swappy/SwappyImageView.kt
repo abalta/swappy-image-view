@@ -4,6 +4,9 @@ import android.content.ClipData
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.os.Build
+import android.os.Bundle
+import android.os.Parcel
+import android.os.Parcelable
 import android.support.constraint.ConstraintLayout
 import android.support.constraint.ConstraintSet
 import android.support.constraint.ConstraintSet.MATCH_CONSTRAINT
@@ -11,6 +14,7 @@ import android.support.constraint.ConstraintSet.VERTICAL
 import android.support.constraint.Guideline
 import android.support.v7.widget.AppCompatImageView
 import android.util.AttributeSet
+import android.util.SparseArray
 import android.view.DragEvent
 import android.view.LayoutInflater
 import android.view.View
@@ -82,8 +86,9 @@ class SwappyImageView @JvmOverloads constructor(
     private var whichImageView = 0
     private var resultDraw: Drawable? = null
 
-
     init {
+
+       this.isSaveEnabled = true
 
         val a = context.obtainStyledAttributes(attrs, R.styleable.SwappyImageView)
 
@@ -139,7 +144,6 @@ class SwappyImageView @JvmOverloads constructor(
     }
 
     private fun prepareView() {
-
         addViews()
         setLayoutParams()
         setConstraints()
@@ -150,6 +154,15 @@ class SwappyImageView @JvmOverloads constructor(
     private fun addViews() {
         guideLine.id = R.id.guideline_id
         addView(guideLine)
+
+        addRemoveBtnMain = mainImageView.findViewById(R.id.btn_add_remove)
+        addRemoveBtnMain.id = R.id.main_add_remove_id
+        addRemoveBtnFirst = firstImageView.findViewById(R.id.btn_add_remove)
+        addRemoveBtnFirst.id = R.id.first_add_remove_id
+        addRemoveBtnSecond = secondImageView.findViewById(R.id.btn_add_remove)
+        addRemoveBtnSecond.id = R.id.second_add_remove_id
+        addRemoveBtnThird = thirdImageView.findViewById(R.id.btn_add_remove)
+        addRemoveBtnThird.id = R.id.third_add_remove_id
 
         mainImageView.id = R.id.main_image_view_id
         mainImageView.tag = id1
@@ -224,11 +237,6 @@ class SwappyImageView @JvmOverloads constructor(
     }
 
     private fun setListeners() {
-
-        addRemoveBtnMain = mainImageView.findViewById(R.id.btn_add_remove)
-        addRemoveBtnFirst = firstImageView.findViewById(R.id.btn_add_remove)
-        addRemoveBtnSecond = secondImageView.findViewById(R.id.btn_add_remove)
-        addRemoveBtnThird = thirdImageView.findViewById(R.id.btn_add_remove)
 
         mainImage = mainImageView.findViewById(R.id.imageView)
         mainImage.setImageResource(params.mainImage)
@@ -476,6 +484,7 @@ class SwappyImageView @JvmOverloads constructor(
             }
         }
     }
+
     /**
      * Remove image
      */
@@ -484,11 +493,50 @@ class SwappyImageView @JvmOverloads constructor(
         imageView.setBackgroundResource(params.placeholder)
         imageButton.setBackgroundResource(params.addIcon)
     }
+
     /**
      * Add image
      */
     private fun addImage(imageView: ImageView, imageButton: ImageButton, drawable: Drawable) {
         imageView.setImageDrawable(drawable)
         imageButton.setBackgroundResource(params.removeIcon)
+    }
+
+    override fun onSaveInstanceState(): Parcelable {
+       val superState: Parcelable = super.onSaveInstanceState()
+        val sss = SwappySavedState(superState)
+        sss.childrenStates = SparseArray()
+        for (i in 0 until childCount) {
+            if (getChildAt(i) != null && getChildAt(i) is ConstraintLayout) {
+                //getChildAt(i).saveHierarchyState(sss.childrenStates)
+                for (j in 0 until (getChildAt(i) as ConstraintLayout).childCount) {
+                    (getChildAt(i) as ConstraintLayout).getChildAt(j).saveHierarchyState(sss.childrenStates)
+                }
+            }
+            //getChildAt(i).saveHierarchyState(sss.childrenStates as SparseArray<Parcelable>)
+        }
+        return sss
+    }
+
+    override fun onRestoreInstanceState(state: Parcelable?) {
+        val sss: SwappySavedState = state as SwappySavedState
+        super.onRestoreInstanceState(sss.superState)
+        for (i in 0 until childCount) {
+            if (getChildAt(i) != null && getChildAt(i) is ConstraintLayout) {
+                getChildAt(i).restoreHierarchyState(sss.childrenStates)
+                for (j in 0 until (getChildAt(i) as ConstraintLayout).childCount) {
+                    (getChildAt(i) as ConstraintLayout).getChildAt(j).restoreHierarchyState(sss.childrenStates)
+                }
+            }
+            //getChildAt(i).restoreHierarchyState(sss.childrenStates)
+        }
+    }
+
+    override fun dispatchSaveInstanceState(container: SparseArray<Parcelable>) {
+        dispatchFreezeSelfOnly(container)
+    }
+
+    override fun dispatchRestoreInstanceState(container: SparseArray<Parcelable>) {
+        dispatchThawSelfOnly(container)
     }
 }
