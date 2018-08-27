@@ -2,10 +2,9 @@ package com.abdullahbalta.swappy
 
 import android.content.ClipData
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.os.Build
-import android.os.Bundle
-import android.os.Parcel
 import android.os.Parcelable
 import android.support.constraint.ConstraintLayout
 import android.support.constraint.ConstraintSet
@@ -14,7 +13,6 @@ import android.support.constraint.ConstraintSet.VERTICAL
 import android.support.constraint.Guideline
 import android.support.v7.widget.AppCompatImageView
 import android.util.AttributeSet
-import android.util.SparseArray
 import android.view.DragEvent
 import android.view.LayoutInflater
 import android.view.View
@@ -86,9 +84,14 @@ class SwappyImageView @JvmOverloads constructor(
     private var whichImageView = 0
     private var resultDraw: Drawable? = null
 
-    init {
+    companion object {
+        private var mainImageDrawable: Drawable? = null
+        private var firstImageDrawable: Drawable? = null
+        private var secondImageDrawable: Drawable? = null
+        private var thirdImageDrawable: Drawable? = null
+    }
 
-       this.isSaveEnabled = true
+    init {
 
         val a = context.obtainStyledAttributes(attrs, R.styleable.SwappyImageView)
 
@@ -247,7 +250,6 @@ class SwappyImageView @JvmOverloads constructor(
             addRemoveBtnMain.setBackgroundResource(params.addIcon)
             mainImage.setBackgroundResource(params.placeholder)
         }
-        mainImage.tag = id1
 
         firstImage = firstImageView.findViewById(R.id.imageView)
         firstImage.setImageResource(params.firstImage)
@@ -258,7 +260,6 @@ class SwappyImageView @JvmOverloads constructor(
             addRemoveBtnFirst.setBackgroundResource(params.addIcon)
             firstImage.setBackgroundResource(params.placeholder)
         }
-        firstImage.tag = id2
 
         secondImage = secondImageView.findViewById(R.id.imageView)
         secondImage.setImageResource(params.secondImage)
@@ -269,7 +270,6 @@ class SwappyImageView @JvmOverloads constructor(
             addRemoveBtnSecond.setBackgroundResource(params.addIcon)
             secondImage.setBackgroundResource(params.placeholder)
         }
-        secondImage.tag = id3
 
         thirdImage = thirdImageView.findViewById(R.id.imageView)
         thirdImage.setImageResource(params.thirdImage)
@@ -280,7 +280,6 @@ class SwappyImageView @JvmOverloads constructor(
             addRemoveBtnThird.setBackgroundResource(params.addIcon)
             thirdImage.setBackgroundResource(params.placeholder)
         }
-        thirdImage.tag = id4
 
         mainImage.setOnLongClickListener(this)
         firstImage.setOnLongClickListener(this)
@@ -291,6 +290,22 @@ class SwappyImageView @JvmOverloads constructor(
         firstImage.setOnDragListener(this)
         secondImage.setOnDragListener(this)
         thirdImage.setOnDragListener(this)
+
+        mainImage.viewTreeObserver.addOnGlobalLayoutListener {
+            checkImageAdded(mainImage)
+        }
+
+        firstImage.viewTreeObserver.addOnGlobalLayoutListener {
+            checkImageAdded(firstImage)
+        }
+
+        secondImage.viewTreeObserver.addOnGlobalLayoutListener {
+            checkImageAdded(secondImage)
+        }
+
+        thirdImage.viewTreeObserver.addOnGlobalLayoutListener {
+            checkImageAdded(thirdImage)
+        }
 
         addRemoveBtnMain.setOnClickListener {
             whichImageView = 0
@@ -328,7 +343,7 @@ class SwappyImageView @JvmOverloads constructor(
             DragEvent.ACTION_DROP -> if (targetDrawable != null && draggedDrawable != null) {
                 target.setImageDrawable(draggedDrawable)
                 dragged.setImageDrawable(targetDrawable)
-                swappyListener?.onSwappedImages(target.tag.toString(), dragged.tag.toString())
+                swappyListener?.onSwappedImages(target.id.toString(), dragged.id.toString())
             }
         }
         return true
@@ -389,19 +404,15 @@ class SwappyImageView @JvmOverloads constructor(
             when (whichImageView) {
                 0 -> {
                     swappyListener?.onAddingImage(mainImage)
-                    checkImageAdded(mainImage)
                 }
                 1 -> {
                     swappyListener?.onAddingImage(firstImage)
-                    checkImageAdded(firstImage)
                 }
                 2 -> {
                     swappyListener?.onAddingImage(secondImage)
-                    checkImageAdded(secondImage)
                 }
                 3 -> {
                     swappyListener?.onAddingImage(thirdImage)
-                    checkImageAdded(thirdImage)
                 }
             }
 
@@ -467,20 +478,28 @@ class SwappyImageView @JvmOverloads constructor(
     private fun checkImageAdded(imageView: ImageView) {
         when (whichImageView) {
             0 -> {
-                if (imageView.drawable != null)
+                if (imageView.drawable != null) {
                     addRemoveBtnMain.setBackgroundResource(params.removeIcon)
+                    imageView.setBackgroundResource(0)
+                }
             }
             1 -> {
-                if (imageView.drawable != null)
+                if (imageView.drawable != null) {
                     addRemoveBtnFirst.setBackgroundResource(params.removeIcon)
+                    imageView.setBackgroundResource(0)
+                }
             }
             2 -> {
-                if (imageView.drawable != null)
+                if (imageView.drawable != null) {
                     addRemoveBtnSecond.setBackgroundResource(params.removeIcon)
+                    imageView.setBackgroundResource(0)
+                }
             }
             3 -> {
-                if (imageView.drawable != null)
+                if (imageView.drawable != null) {
                     addRemoveBtnThird.setBackgroundResource(params.removeIcon)
+                    imageView.setBackgroundResource(0)
+                }
             }
         }
     }
@@ -497,46 +516,63 @@ class SwappyImageView @JvmOverloads constructor(
     /**
      * Add image
      */
-    private fun addImage(imageView: ImageView, imageButton: ImageButton, drawable: Drawable) {
+    private fun addImage(imageView: ImageView, imageButton: ImageButton, drawable: Drawable?) {
+        if (drawable != null) {
+            imageButton.setBackgroundResource(params.removeIcon)
+            imageView.setBackgroundResource(0)
+        } else {
+            imageButton.setBackgroundResource(params.addIcon)
+            imageView.setBackgroundResource(params.placeholder)
+        }
         imageView.setImageDrawable(drawable)
-        imageButton.setBackgroundResource(params.removeIcon)
+    }
+
+    fun addImage(bitmap: Bitmap) {
+        addImageDrawableBitmap(null, bitmap)
+    }
+
+    fun addImage(drawable: Drawable?) {
+        addImageDrawableBitmap(drawable, null)
+    }
+
+    private fun setImage(imageView: ImageView, drawable: Drawable?, bitmap: Bitmap?) {
+        if (drawable != null)
+            imageView.setImageDrawable(drawable)
+        else
+            imageView.setImageBitmap(bitmap)
+    }
+
+    private fun addImageDrawableBitmap(drawable: Drawable?, bitmap: Bitmap?) {
+        when (whichImageView) {
+            0 -> {
+                setImage(mainImage, drawable, bitmap)
+            }
+            1 -> {
+                setImage(firstImage, drawable, bitmap)
+            }
+            2 -> {
+                setImage(secondImage, drawable, bitmap)
+            }
+            3 -> {
+                setImage(thirdImage, drawable, bitmap)
+            }
+        }
     }
 
     override fun onSaveInstanceState(): Parcelable {
-       val superState: Parcelable = super.onSaveInstanceState()
-        val sss = SwappySavedState(superState)
-        sss.childrenStates = SparseArray()
-        for (i in 0 until childCount) {
-            if (getChildAt(i) != null && getChildAt(i) is ConstraintLayout) {
-                //getChildAt(i).saveHierarchyState(sss.childrenStates)
-                for (j in 0 until (getChildAt(i) as ConstraintLayout).childCount) {
-                    (getChildAt(i) as ConstraintLayout).getChildAt(j).saveHierarchyState(sss.childrenStates)
-                }
-            }
-            //getChildAt(i).saveHierarchyState(sss.childrenStates as SparseArray<Parcelable>)
-        }
-        return sss
+        mainImageDrawable = mainImage.drawable
+        firstImageDrawable = firstImage.drawable
+        secondImageDrawable = secondImage.drawable
+        thirdImageDrawable = thirdImage.drawable
+        return super.onSaveInstanceState()
     }
 
     override fun onRestoreInstanceState(state: Parcelable?) {
-        val sss: SwappySavedState = state as SwappySavedState
-        super.onRestoreInstanceState(sss.superState)
-        for (i in 0 until childCount) {
-            if (getChildAt(i) != null && getChildAt(i) is ConstraintLayout) {
-                getChildAt(i).restoreHierarchyState(sss.childrenStates)
-                for (j in 0 until (getChildAt(i) as ConstraintLayout).childCount) {
-                    (getChildAt(i) as ConstraintLayout).getChildAt(j).restoreHierarchyState(sss.childrenStates)
-                }
-            }
-            //getChildAt(i).restoreHierarchyState(sss.childrenStates)
-        }
+        super.onRestoreInstanceState(state)
+        addImage(mainImage, addRemoveBtnMain, mainImageDrawable)
+        addImage(firstImage, addRemoveBtnFirst, firstImageDrawable)
+        addImage(secondImage, addRemoveBtnSecond, secondImageDrawable)
+        addImage(thirdImage, addRemoveBtnThird, thirdImageDrawable)
     }
 
-    override fun dispatchSaveInstanceState(container: SparseArray<Parcelable>) {
-        dispatchFreezeSelfOnly(container)
-    }
-
-    override fun dispatchRestoreInstanceState(container: SparseArray<Parcelable>) {
-        dispatchThawSelfOnly(container)
-    }
 }
