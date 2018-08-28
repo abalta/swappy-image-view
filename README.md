@@ -21,7 +21,7 @@ allprojects {
 
 ```
 dependencies {
-	        implementation 'com.github.abalta:swappy-image-view:master-SNAPSHOT'
+	        implementation 'com.github.abalta:swappy-image-view:1.0.0'
 	}
 
 ```
