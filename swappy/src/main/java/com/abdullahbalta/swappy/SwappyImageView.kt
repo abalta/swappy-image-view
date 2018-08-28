@@ -291,7 +291,7 @@ class SwappyImageView @JvmOverloads constructor(
         secondImage.setOnDragListener(this)
         thirdImage.setOnDragListener(this)
 
-        mainImage.viewTreeObserver.addOnGlobalLayoutListener {
+        /*mainImage.viewTreeObserver.addOnGlobalLayoutListener {
             checkImageAdded(mainImage)
         }
 
@@ -305,7 +305,14 @@ class SwappyImageView @JvmOverloads constructor(
 
         thirdImage.viewTreeObserver.addOnGlobalLayoutListener {
             checkImageAdded(thirdImage)
-        }
+        }*/
+
+        /*viewTreeObserver.addOnDrawListener {
+            checkImageAdded(mainImage)
+            checkImageAdded(firstImage)
+            checkImageAdded(secondImage)
+            checkImageAdded(thirdImage)
+        }*/
 
         addRemoveBtnMain.setOnClickListener {
             whichImageView = 0
@@ -475,32 +482,36 @@ class SwappyImageView @JvmOverloads constructor(
     /**
      * Check if image successfully added
      */
-    private fun checkImageAdded(imageView: ImageView) {
+    fun setImageAddedSuccess() {
         when (whichImageView) {
             0 -> {
-                if (imageView.drawable != null) {
-                    addRemoveBtnMain.setBackgroundResource(params.removeIcon)
-                    imageView.setBackgroundResource(0)
-                }
+                addRemoveBtnMain.setBackgroundResource(params.removeIcon)
+                mainImage.setBackgroundResource(0)
             }
             1 -> {
-                if (imageView.drawable != null) {
-                    addRemoveBtnFirst.setBackgroundResource(params.removeIcon)
-                    imageView.setBackgroundResource(0)
-                }
+                addRemoveBtnFirst.setBackgroundResource(params.removeIcon)
+                firstImage.setBackgroundResource(0)
             }
             2 -> {
-                if (imageView.drawable != null) {
-                    addRemoveBtnSecond.setBackgroundResource(params.removeIcon)
-                    imageView.setBackgroundResource(0)
-                }
+                addRemoveBtnSecond.setBackgroundResource(params.removeIcon)
+                secondImage.setBackgroundResource(0)
             }
             3 -> {
-                if (imageView.drawable != null) {
-                    addRemoveBtnThird.setBackgroundResource(params.removeIcon)
-                    imageView.setBackgroundResource(0)
-                }
+                addRemoveBtnThird.setBackgroundResource(params.removeIcon)
+                thirdImage.setBackgroundResource(0)
             }
+        }
+    }
+
+    /**
+     * Check id image adding failed
+     */
+    fun setImageAddedFailed() {
+        when (whichImageView) {
+            0 -> { removeImage(mainImage, addRemoveBtnMain) }
+            1 -> { removeImage(firstImage, addRemoveBtnFirst) }
+            2 -> { removeImage(secondImage, addRemoveBtnSecond) }
+            3 -> { removeImage(thirdImage, addRemoveBtnThird) }
         }
     }
 
@@ -546,15 +557,23 @@ class SwappyImageView @JvmOverloads constructor(
         when (whichImageView) {
             0 -> {
                 setImage(mainImage, drawable, bitmap)
+                addRemoveBtnMain.setBackgroundResource(params.removeIcon)
+                mainImage.setBackgroundResource(0)
             }
             1 -> {
                 setImage(firstImage, drawable, bitmap)
+                addRemoveBtnFirst.setBackgroundResource(params.removeIcon)
+                firstImage.setBackgroundResource(0)
             }
             2 -> {
                 setImage(secondImage, drawable, bitmap)
+                addRemoveBtnSecond.setBackgroundResource(params.removeIcon)
+                secondImage.setBackgroundResource(0)
             }
             3 -> {
                 setImage(thirdImage, drawable, bitmap)
+                addRemoveBtnThird.setBackgroundResource(params.removeIcon)
+                thirdImage.setBackgroundResource(0)
             }
         }
     }
