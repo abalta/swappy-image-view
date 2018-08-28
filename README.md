@@ -39,7 +39,13 @@ dependencies {
 
 ### Add image from gallery/camera
 
+Implement **OnSwappyListener** to your activity/fragment
+
 ```kotlin
+    override fun onAddingImage(imageView: ImageView) {
+        //Trigger gallery/camera intent code
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 	    ...
