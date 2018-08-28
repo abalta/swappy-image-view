@@ -48,7 +48,7 @@ dependencies {
     }
 ```
 
-## Add image from url
+### Add image from url
 
 Implement **OnSwappyListener** to your activity/fragment, to handle placeholder you need to call **setImageAddedFailed()** or **setImageAddedSuccess()**
 
