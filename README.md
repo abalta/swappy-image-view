@@ -1,9 +1,9 @@
 # swappy-image-view
 An image change/sort view for editing profile, image slider, product slider etc.
 
-![alt tag](https://github.com/abalta/swappy-image-view/blob/dev/assets/remove_images.gif)
-![alt tag](https://github.com/abalta/swappy-image-view/blob/dev/assets/add_images_gallery.gif)
-![alt tag](https://github.com/abalta/swappy-image-view/blob/dev/assets/add_images_url.gif)
+![alt tag](https://github.com/abalta/swappy-image-view/blob/dev/assets/remove_images.gif | width=200)
+![alt tag](https://github.com/abalta/swappy-image-view/blob/dev/assets/add_images_gallery.gif | width=200)
+![alt tag](https://github.com/abalta/swappy-image-view/blob/dev/assets/add_image_url.gif | width=200)
 
 ## Download
 
