@@ -1,7 +1,7 @@
 # swappy-image-view
 An image change/sort view for editing profile, image slider, product slider etc.
 
-<img src="https://github.com/abalta/swappy-image-view/blob/dev/assets/remove_images.gif" width="280" height="540">  <img src="https://github.com/abalta/swappy-image-view/blob/dev/assets/add_images_gallery.gif" width="280" height="540">  <img src="https://github.com/abalta/swappy-image-view/blob/dev/assets/add_image_url.gif" width="280" height="540">
+<img src="https://github.com/abalta/swappy-image-view/blob/master/assets/swappy.gif" width="360" height="640">
 
 ## Download
 
@@ -28,13 +28,46 @@ dependencies {
 
 ## Usage
 
-Add swappy image view to your layout xml
+### Add swappy image view to your layout xml
 
 ```xml
     <com.abdullahbalta.swappy.SwappyImageView
             android:id="@+id/swappy_view"
             android:layout_width="match_parent"
             android:layout_height="240dp"/>
+```
+
+### Add image from gallery/camera
+
+```kotlin
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+	    ...
+            swappy.addImage('drawable' or 'bitmap')
+        }
+    }
+```
+
+## Add image from url
+
+Implement **OnSwappyListener** to your activity/fragment, to handle placeholder you need to call **setImageAddedFailed()** or **setImageAddedSuccess()**
+
+```kotlin
+    override fun onAddingImage(imageView: ImageView) {
+    	//Use any image loading library
+        Glide.with(this).load(edtUrl.text.toString()).listener(object: RequestListener<Drawable> {
+            override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
+                swappy.setImageAddedFailed()
+                return false
+            }
+
+            override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+                swappy.setImageAddedSuccess()
+                return false
+            }
+
+        }).into(imageView)
+    }
 ```
 
 ## Features
