@@ -93,7 +93,7 @@ Implement **OnSwappyListener** to your activity/fragment, to handle placeholder 
 
 ### Thanks to
 
-Sample app uses following libraries demostrates demo, you may use different way to show swappy image view
+Sample app uses following libraries demonstrates demo app, you may use different way to show swappy image view
 
 * [alhazmy13 - MediaPicker](https://github.com/alhazmy13/MediaPicker)
 * [bumptech - glide](https://github.com/bumptech/glide)
