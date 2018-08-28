@@ -1,8 +1,9 @@
 # swappy-image-view
 An image change/sort view for editing profile, image slider, product slider etc.
 
-![alt tag](https://github.com/abalta/swappy-image-view/blob/develop/assets/bottomify.gif)
-![alt tag](https://github.com/abalta/swappy-image-view/blob/develop/assets/spotify_bottom.png)
+![alt tag](https://github.com/abalta/swappy-image-view/blob/dev/assets/remove_images.gif)
+![alt tag](https://github.com/abalta/swappy-image-view/blob/dev/assets/add_images_gallery.gif)
+![alt tag](https://github.com/abalta/swappy-image-view/blob/dev/assets/add_images_url.gif)
 
 ## Download
 
