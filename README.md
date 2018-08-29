@@ -90,6 +90,14 @@ Implement **OnSwappyListener** to your activity/fragment, to handle placeholder 
          * app:third_image -> pre-defined third image (vector supported)
          */
 ```
+## Influence
+
+### Tinder
+
+<img src="https://github.com/abalta/swappy-image-view/blob/master/assets/tinder_logo.jpg" 
+height="128" width="128">
+
+This project influenced by Tinder's good looking profile image edit/sort view
 
 ### Thanks to
 
